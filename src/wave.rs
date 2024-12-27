@@ -1,6 +1,6 @@
 use std::io::{Seek, SeekFrom};
 
-use crate::filter::{Amplitude, Frequency, Sample};
+use crate::{Amplitude, Frequency, Sample};
 
 #[derive(Clone, Copy)]
 pub struct SquareWaveGenerator<T> {
@@ -38,7 +38,9 @@ impl<T: Iterator<Item = Sample<Frequency>>> Iterator for SquareWaveGenerator<T> 
     fn next(&mut self) -> Option<Self::Item> {
         self.generator.next().map(|sample| Sample {
             data: Amplitude(
-                (*sample * sample.phase as f64 / self.sample_rate as f64 - self.duty_cycle).fract().round(),
+                (*sample * sample.phase as f64 / self.sample_rate as f64 - self.duty_cycle)
+                    .fract()
+                    .round(),
             ),
             phase: sample.phase,
         })
@@ -75,7 +77,8 @@ impl<T: Iterator<Item = Sample<Frequency>>> Iterator for SawtoothWaveGenerator<T
                 if (*sample * sample.phase as f64 / self.sample_rate as f64).fract()
                     < self.duty_cycle
                 {
-                    (*sample * sample.phase as f64 / (self.sample_rate as f64 * self.duty_cycle)).fract()
+                    (*sample * sample.phase as f64 / (self.sample_rate as f64 * self.duty_cycle))
+                        .fract()
                 } else {
                     0.0
                 },

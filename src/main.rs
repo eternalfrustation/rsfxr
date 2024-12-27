@@ -2,7 +2,7 @@ use alsa::{
     pcm::{Format, HwParams},
     Direction, ValueOr, PCM,
 };
-use rsfxr::filter::{AmplitudeDomainFilterable, ConstantFrequencyGenerator, FrequencyDomainFilterable};
+use rsfxr::{filter::{AmplitudeDomainFilterable, FrequencyDomainFilterable}, generator::ConstantFrequencyGenerator};
 use rsfxr::wave::WhiteNoiseGenerator;
 
 fn main() {
