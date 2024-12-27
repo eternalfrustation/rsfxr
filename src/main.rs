@@ -2,12 +2,8 @@ use alsa::{
     pcm::{Format, HwParams},
     Direction, ValueOr, PCM,
 };
-use filter::{AmplitudeDomainFilterable, ConstantFrequencyGenerator, FrequencyDomainFilterable};
-use wave::WhiteNoiseGenerator;
-
-pub mod filter;
-pub mod generator;
-pub mod wave;
+use rsfxr::filter::{AmplitudeDomainFilterable, ConstantFrequencyGenerator, FrequencyDomainFilterable};
+use rsfxr::wave::WhiteNoiseGenerator;
 
 fn main() {
     let sample_rate = 44100;
