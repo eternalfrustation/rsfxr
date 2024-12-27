@@ -21,7 +21,10 @@ pub mod min_cutoff;
 pub mod retrigger;
 pub mod vibrato;
 
+/// Contains filters which can be applied to iterators of frequency samples, i.e., to
+/// `Iterator<Item = Sample<Frequency>>`
 pub trait FrequencyDomainFilterable {
+    /// Stops the stream when frequency drops below a threshold.
     fn min_cutoff(self, min_cutoff: f64) -> MinCutoff<Self>
     where
         Self: Sized,
@@ -32,6 +35,8 @@ pub trait FrequencyDomainFilterable {
         }
     }
 
+    /// Adds `frequency_slide` to the frequency on every call to `next()`.
+    /// Adds `frequency_slide_delta` to the frequency_slide on every call to `next()`.
     fn slide(
         self,
         frequency_slide: f64,
@@ -48,6 +53,7 @@ pub trait FrequencyDomainFilterable {
         }
     }
 
+    /// Does a sin wave on the frequency.
     fn vibrato(self, vibrato_speed: f64, vibrato_depth: f64, sample_rate: u64) -> Vibrato<Self>
     where
         Self: Sized,
@@ -60,6 +66,7 @@ pub trait FrequencyDomainFilterable {
         }
     }
 
+    /// Multiplies the frequency after a certain point
     fn arpeggiation(self, freq_mult: f64, delay: f64, sample_rate: u64) -> Arpeggiation<Self>
     where
         Self: Sized,
@@ -72,6 +79,8 @@ pub trait FrequencyDomainFilterable {
         }
     }
 
+    /// Generates `num_triggers` new streams identical to current one, but from the beginning, and
+    /// adds them to the current one
     fn retrigger(self, rate: f64, num_retriggers: u64, sample_rate: u64) -> Retrigger<Self>
     where
         Self: Sized + Seek,
@@ -86,6 +95,7 @@ pub trait FrequencyDomainFilterable {
         }
     }
 
+    /// Converts a stream of frequency samples to amplitude samples, using a square wave.
     fn square_wave(self, sample_rate: u64, duty_cycle: f64) -> SquareWaveGenerator<Self>
     where
         Self: Sized,
@@ -97,6 +107,7 @@ pub trait FrequencyDomainFilterable {
         }
     }
 
+    /// Converts a stream of frequency samples to amplitude samples, using a sine wave.
     fn sine_wave(self, sample_rate: u64, duty_cycle: f64) -> SineWaveGenerator<Self>
     where
         Self: Sized,
@@ -108,6 +119,7 @@ pub trait FrequencyDomainFilterable {
         }
     }
 
+    /// Converts a stream of frequency samples to amplitude samples, using a sawtooth wave.
     fn sawtooth_wave(self, sample_rate: u64, duty_cycle: f64) -> SawtoothWaveGenerator<Self>
     where
         Self: Sized,
@@ -123,6 +135,8 @@ pub trait FrequencyDomainFilterable {
 impl<T: Iterator<Item = Sample<Frequency>>> FrequencyDomainFilterable for T {}
 
 pub trait AmplitudeDomainFilterable {
+    /// Generates `num_triggers` new streams identical to current one, but from the beginning, and
+    /// adds them to the current one
     fn retrigger(self, rate: f64, num_retriggers: u64, sample_rate: u64) -> Retrigger<Self>
     where
         Self: Sized + Seek,
@@ -137,6 +151,8 @@ pub trait AmplitudeDomainFilterable {
         }
     }
 
+    /// Creates a new stream, delays it, then varies the delay based on a sine wave, then adds the
+    /// streams together
     fn flanger(self, offset: f64, sweep: f64, sample_rate: u64) -> Flanger<Self>
     where
         Self: Sized + Seek,
@@ -149,6 +165,7 @@ pub trait AmplitudeDomainFilterable {
         }
     }
 
+    /// Gradual increase and decrease to the amplitude
     fn envelope(
         self,
         attack_time: f64,

@@ -2,6 +2,7 @@ use std::io::{Seek, SeekFrom};
 
 use crate::{Amplitude, Frequency, Sample};
 
+/// Generates a square wave based on the frequency from recieved from generator.
 #[derive(Clone, Copy)]
 pub struct SquareWaveGenerator<T> {
     pub generator: T,
@@ -9,6 +10,7 @@ pub struct SquareWaveGenerator<T> {
     pub sample_rate: u64,
 }
 
+/// Generates a sine wave based on the frequency from recieved from generator.
 #[derive(Clone, Copy)]
 pub struct SineWaveGenerator<T> {
     pub generator: T,
@@ -16,6 +18,7 @@ pub struct SineWaveGenerator<T> {
     pub sample_rate: u64,
 }
 
+/// Generates a sawtooth wave based on the frequency from recieved from generator.
 #[derive(Clone, Copy)]
 pub struct SawtoothWaveGenerator<T> {
     pub generator: T,
@@ -23,14 +26,6 @@ pub struct SawtoothWaveGenerator<T> {
     pub sample_rate: u64,
 }
 
-#[derive(Clone, Copy)]
-pub struct WhiteNoiseGenerator(u64);
-
-impl WhiteNoiseGenerator {
-    pub fn new() -> Self {
-        Self(0)
-    }
-}
 
 impl<T: Iterator<Item = Sample<Frequency>>> Iterator for SquareWaveGenerator<T> {
     type Item = Sample<Amplitude>;
@@ -88,17 +83,6 @@ impl<T: Iterator<Item = Sample<Frequency>>> Iterator for SawtoothWaveGenerator<T
     }
 }
 
-impl Iterator for WhiteNoiseGenerator {
-    type Item = Sample<Amplitude>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0 += 1;
-        Some(Sample {
-            data: Amplitude(rand::random()),
-            phase: self.0 - 1,
-        })
-    }
-}
 
 impl<T: Seek> Seek for SquareWaveGenerator<T> {
     fn seek(&mut self, pos: SeekFrom) -> Result<u64, std::io::Error> {
@@ -118,17 +102,3 @@ impl<T: Seek> Seek for SawtoothWaveGenerator<T> {
     }
 }
 
-impl Seek for WhiteNoiseGenerator {
-    fn seek(&mut self, pos: SeekFrom) -> Result<u64, std::io::Error> {
-        match pos {
-            SeekFrom::Start(pos) => {
-                self.0 = pos;
-            }
-            SeekFrom::End(_) => return Err(std::io::Error::from(std::io::ErrorKind::InvalidInput)),
-            SeekFrom::Current(pos) => {
-                self.0 = (self.0 as i64 + pos) as u64;
-            }
-        }
-        Ok(self.0)
-    }
-}

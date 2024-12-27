@@ -4,6 +4,7 @@ pub mod filter;
 pub mod generator;
 pub mod wave;
 
+/// A packet of frequency in Hz.
 #[derive(Clone, Copy, Debug)]
 pub struct Frequency(pub f64);
 
@@ -21,6 +22,7 @@ impl From<f64> for Frequency {
     }
 }
 
+/// A packet of amplitude.
 #[derive(Clone, Copy, Debug)]
 pub struct Amplitude(pub f64);
 
@@ -38,6 +40,7 @@ impl Deref for Amplitude {
     }
 }
 
+/// A Sample can contain either frequency or amplitude and the current state of the stream as phase.
 #[derive(Clone, Copy, Debug)]
 pub struct Sample<T> {
     pub data: T,

@@ -1,7 +1,8 @@
 use std::io::{Seek, SeekFrom};
 
-use crate::{Frequency, Sample};
+use crate::{Amplitude, Frequency, Sample};
 
+/// Produces a constant frequency, phase increments on every call to `next()`.
 #[derive(Clone, Copy)]
 pub struct ConstantFrequencyGenerator {
     pub frequency: f64,
@@ -41,5 +42,42 @@ impl Seek for ConstantFrequencyGenerator {
             }
         }
         Ok(self.phase)
+    }
+}
+
+/// Generates white noise.
+#[derive(Clone, Copy)]
+pub struct WhiteNoiseGenerator(u64);
+
+impl WhiteNoiseGenerator {
+    pub fn new() -> Self {
+        Self(0)
+    }
+}
+
+impl Iterator for WhiteNoiseGenerator {
+    type Item = Sample<Amplitude>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0 += 1;
+        Some(Sample {
+            data: Amplitude(rand::random()),
+            phase: self.0 - 1,
+        })
+    }
+}
+
+impl Seek for WhiteNoiseGenerator {
+    fn seek(&mut self, pos: SeekFrom) -> Result<u64, std::io::Error> {
+        match pos {
+            SeekFrom::Start(pos) => {
+                self.0 = pos;
+            }
+            SeekFrom::End(_) => return Err(std::io::Error::from(std::io::ErrorKind::InvalidInput)),
+            SeekFrom::Current(pos) => {
+                self.0 = (self.0 as i64 + pos) as u64;
+            }
+        }
+        Ok(self.0)
     }
 }

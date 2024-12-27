@@ -1,9 +1,14 @@
 [package]
 name = "rsfxr"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "A small Rust library for generating random sound effects."
 license = "Apache-2.0"
+authors = ["eternalfrustation"]
+documentation = "https://docs.rs/rsfxr/latest/rsfxr/"
+readme = "README.md"
+homepage = "https://github.com/eternalfrustation/rsfxr/"
+repository = "https://github.com/eternalfrustation/rsfxr/"
 
 [dependencies]
 alsa = "0.9.1"
