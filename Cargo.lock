@@ -124,7 +124,7 @@ dependencies = [
 
 [[package]]
 name = "rsfxr"
-version = "0.1.2"
+version = "0.2.2"
 dependencies = [
  "alsa",
  "rand",
