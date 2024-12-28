@@ -4,6 +4,8 @@ use arpeggiation::Arpeggiation;
 use envelope::Envelope;
 use flanger::Flanger;
 use frequency_slide::FrequencySlide;
+use highpass::Highpass;
+use lowpass::Lowpass;
 use min_cutoff::MinCutoff;
 use retrigger::Retrigger;
 use vibrato::Vibrato;
@@ -17,6 +19,8 @@ pub mod arpeggiation;
 pub mod envelope;
 pub mod flanger;
 pub mod frequency_slide;
+pub mod highpass;
+pub mod lowpass;
 pub mod min_cutoff;
 pub mod retrigger;
 pub mod vibrato;
@@ -185,6 +189,22 @@ pub trait AmplitudeDomainFilterable {
             decay_time,
             sample_rate,
         }
+    }
+
+    fn lowpass(self, cutoff: f64, sample_rate: u64) -> Lowpass<Self>
+    where
+        Self: Sized,
+        Self: Iterator<Item = Sample<Amplitude>>,
+    {
+        Lowpass::new(self, cutoff, sample_rate)
+    }
+
+    fn highpass(self, cutoff: f64, sample_rate: u64) -> Highpass<Self>
+    where
+        Self: Sized,
+        Self: Iterator<Item = Sample<Amplitude>>,
+    {
+        Highpass::new(self, cutoff, sample_rate)
     }
 }
 
