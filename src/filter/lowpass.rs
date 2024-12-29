@@ -14,11 +14,16 @@ impl<T: Iterator<Item = Sample<Amplitude>>> Iterator for Lowpass<T> {
     type Item = Sample<Amplitude>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.generator.next().map(|sample| Sample {
-            data: Amplitude(
-                *sample * self.smoothing_factor + *self.prev_sample * (1.0 - self.smoothing_factor),
-            ),
-            ..sample
+        self.generator.next().map(|sample| {
+            let output = Sample {
+                data: Amplitude(
+                    *sample * self.smoothing_factor
+                        + *self.prev_sample * (1.0 - self.smoothing_factor),
+                ),
+                ..sample
+            };
+            self.prev_sample = sample;
+            output
         })
     }
 }

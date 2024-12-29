@@ -23,6 +23,7 @@ impl<T: Iterator<Item = Sample<Amplitude>>> Iterator for Highpass<T> {
                 ),
                 ..sample
             };
+            self.prev_sample = sample;
             self.prev_output_sample
         })
     }
